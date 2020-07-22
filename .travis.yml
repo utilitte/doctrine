@@ -1,0 +1,35 @@
+language: php
+php:
+    - 7.4
+
+before_install:
+    - phpenv config-rm xdebug.ini || return 0 # Turn off XDebug
+
+install:
+    - travis_retry composer install --no-progress --prefer-dist # Install dependencies
+
+after_failure:
+    - for i in $(find tests -name \*.actual); do echo "--- $i"; cat $i; echo; echo; done # Print *.actual content
+
+jobs:
+    include:
+        - stage: Tests
+          php: 7.4
+          script:
+              - make tests
+
+        - stage: Code style
+          php: 7.4
+          script:
+              - make cs
+
+        - stage: PHPStan
+          php: 7.4
+          script:
+              - make phpstan
+
+sudo: false
+
+cache:
+    directories:
+        - $HOME/.composer/cache
