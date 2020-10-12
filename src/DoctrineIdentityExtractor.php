@@ -19,7 +19,7 @@ final class DoctrineIdentityExtractor
 	 * @param object[] $entities
 	 * @return mixed[]
 	 */
-	public function extractIdentities(iterable $entities, bool $allowMixing = false): array
+	public function extractIdentities(iterable $entities, bool $allowTypeMixing = false): array
 	{
 		$type = null;
 		$ids = [];
@@ -33,7 +33,7 @@ final class DoctrineIdentityExtractor
 
 			$className = get_class($entity);
 
-			if (!$allowMixing) {
+			if (!$allowTypeMixing) {
 				$this->checkType($className, $type);
 			}
 
