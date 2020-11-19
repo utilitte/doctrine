@@ -30,6 +30,7 @@ final class DoctrineIdentityExtractor
 	public function extractIdentity(object $entity)
 	{
 		$ids = $this->extractIdentities($entity);
+
 		if (count($ids) !== 1) {
 			throw new InvalidArgumentException(sprintf('Entity "%s" must have one identity', get_class($entity)));
 		}
@@ -54,11 +55,12 @@ final class DoctrineIdentityExtractor
 			}
 
 			$className = get_class($entity);
+
 			if (!$className) {
 				throw new LogicException('Cannot get class name');
 			}
 
-			if (!$allowTypeMixing) {
+			if (!$allowMixing) {
 				if (!$type) {
 					$type = $className;
 				} else {
@@ -73,9 +75,10 @@ final class DoctrineIdentityExtractor
 	}
 
 	/**
+	 * @param object[] $entities
 	 * @return mixed
 	 */
-	public function extractIdentityMany(iterable $entities, bool $allowTypeMixing = false)
+	public function extractIdentityMany(iterable $entities, bool $allowMixing = false)
 	{
 		$type = null;
 		$ids = [];
@@ -88,11 +91,12 @@ final class DoctrineIdentityExtractor
 			}
 
 			$className = get_class($entity);
+
 			if (!$className) {
 				throw new LogicException('Cannot get class name');
 			}
 
-			if (!$allowTypeMixing) {
+			if (!$allowMixing) {
 				if (!$type) {
 					$type = $className;
 				} else {

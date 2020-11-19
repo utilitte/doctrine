@@ -9,14 +9,15 @@ use Doctrine\ORM\Mapping\MappingException;
 final class QueryMetadataExtractor
 {
 
-	/** @var EntityManagerInterface */
-	private $em;
+	private EntityManagerInterface $em;
 
-	public function __construct(EntityManagerInterface $em) {
+	public function __construct(EntityManagerInterface $em)
+	{
 		$this->em = $em;
 	}
 
-	public function getTableName(string $entity): string {
+	public function getTableName(string $entity): string
+	{
 		return $this->em->getClassMetadata($entity)->getTableName();
 	}
 
@@ -25,13 +26,13 @@ final class QueryMetadataExtractor
 	 * @return string[]
 	 * @throws MappingException
 	 */
-	public function getColumns(string $entity, ?array $fields = null): array {
+	public function getColumns(string $entity, ?array $fields = null): array
+	{
 		$metadata = $this->em->getClassMetadata($entity);
-		$fields = $fields === self::ALL
-			? array_merge($metadata->getFieldNames(), $this->getSingleAssociationFields($metadata))
-			: $fields;
+		$fields ??= array_merge($metadata->getFieldNames(), $this->getSingleAssociationFields($metadata));
 
 		$columns = [];
+
 		foreach ($fields as $field) {
 			$columns[$field] = $metadata->hasField($field)
 				? $metadata->getColumnName($field)
@@ -44,7 +45,8 @@ final class QueryMetadataExtractor
 	/**
 	 * @throws MappingException
 	 */
-	public function getColumn(string $entity, string $field): string {
+	public function getColumn(string $entity, string $field): string
+	{
 		$metadata = $this->em->getClassMetadata($entity);
 
 		return $metadata->hasField($field)
@@ -55,19 +57,16 @@ final class QueryMetadataExtractor
 	/**
 	 * @return string[]
 	 */
-	private function getSingleAssociationFields(ClassMetadata $metadata): array {
+	private function getSingleAssociationFields(ClassMetadata $metadata): array
+	{
 		$associations = array_map(
-			function (array $mapping): string {
-				return $mapping['fieldName'];
-			},
+			fn (array $mapping): string => $mapping['fieldName'],
 			$metadata->getAssociationMappings()
 		);
 
 		return array_filter(
 			$associations,
-			function (string $field) use ($metadata): bool {
-				return $metadata->isAssociationWithSingleJoinColumn($field);
-			}
+			fn (string $field): bool => $metadata->isAssociationWithSingleJoinColumn($field)
 		);
 	}
 
