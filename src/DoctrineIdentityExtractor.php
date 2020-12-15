@@ -2,6 +2,7 @@
 
 namespace Utilitte\Doctrine;
 
+use Doctrine\Common\Proxy\Proxy;
 use Doctrine\ORM\EntityManagerInterface;
 use InvalidArgumentException;
 use LogicException;
@@ -90,17 +91,15 @@ final class DoctrineIdentityExtractor
 				);
 			}
 
-			$className = get_class($entity);
-
-			if (!$className) {
-				throw new LogicException('Cannot get class name');
-			}
-
 			if (!$allowMixing) {
 				if (!$type) {
-					$type = $className;
+					$type = get_class($entity);
+
+					if (!$type) {
+						throw new LogicException('Cannot get class name');
+					}
 				} else {
-					$this->checkType($className, $type);
+					$this->checkType($entity, $type);
 				}
 			}
 
@@ -110,11 +109,11 @@ final class DoctrineIdentityExtractor
 		return $ids;
 	}
 
-	private function checkType(string $class, string $type): void
+	private function checkType(object $entity, string $type): void
 	{
-		if ($type !== $class) {
+		if (get_class($entity) !== $type && !$entity instanceof Proxy && get_parent_class($entity) !== $type) {
 			throw new InvalidArgumentException(
-				sprintf('Given array must be an array of %s, %s contained in array', $type, $class)
+				sprintf('Given array must be an array of %s, %s contained in array', $type, $entity)
 			);
 		}
 	}
