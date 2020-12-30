@@ -54,6 +54,11 @@ final class QueryMetadataExtractor
 			: $metadata->getSingleAssociationJoinColumnName($field);
 	}
 
+	public function getClassMetadata(string $entity): ClassMetadata
+	{
+		return $this->em->getClassMetadata($entity);
+	}
+
 	/**
 	 * @return string[]
 	 */
