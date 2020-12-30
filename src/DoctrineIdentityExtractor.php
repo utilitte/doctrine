@@ -55,17 +55,11 @@ final class DoctrineIdentityExtractor
 				);
 			}
 
-			$className = get_class($entity);
-
-			if (!$className) {
-				throw new LogicException('Cannot get class name');
-			}
-
 			if (!$allowMixing) {
 				if (!$type) {
-					$type = $className;
+					$type = $this->getClassNameFromEntity($entity);
 				} else {
-					$this->checkType($className, $type);
+					$this->checkType($entity, $type);
 				}
 			}
 
@@ -93,11 +87,7 @@ final class DoctrineIdentityExtractor
 
 			if (!$allowMixing) {
 				if (!$type) {
-					$type = get_class($entity);
-
-					if (!$type) {
-						throw new LogicException('Cannot get class name');
-					}
+					$type = $this->getClassNameFromEntity($entity);
 				} else {
 					$this->checkType($entity, $type);
 				}
@@ -109,11 +99,20 @@ final class DoctrineIdentityExtractor
 		return $ids;
 	}
 
+	private function getClassNameFromEntity(object $entity): string
+	{
+		if ($entity instanceof Proxy) {
+			return get_parent_class($entity);
+		}
+
+		return get_class($entity);
+	}
+
 	private function checkType(object $entity, string $type): void
 	{
-		if (get_class($entity) !== $type && !$entity instanceof Proxy && get_parent_class($entity) !== $type) {
+		if (!$entity instanceof $type) {
 			throw new InvalidArgumentException(
-				sprintf('Given array must be an array of %s, %s contained in array', $type, $entity)
+				sprintf('Given array must be an array of %s, %s contained in array', $type, $this->getClassNameFromEntity($entity))
 			);
 		}
 	}
