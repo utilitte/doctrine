@@ -36,17 +36,22 @@ final class RawQueryFactory
 	 */
 	private function replace(array $matches, array $aliases): string
 	{
-		if ($matches[1] === 'fn') {
+		if ($matches[2] === 'fn') {
 			return $this->replaceFunctions($matches, $aliases);
 		}
-		if (!isset($aliases[$matches[1]])) {
+		if (!isset($aliases[$matches[2]])) {
 			throw new InvalidArgumentException(sprintf('Alias %s not set', $matches[1]));
 		}
 
-		return isset($matches[2])
-			? $this->queryMetadataExtractor->getColumn($aliases[$matches[1]], $matches[2])
+		$prefix = '';
+		if ($matches[1] === '%') {
+			$prefix = $this->queryMetadataExtractor->getTableName($aliases[$matches[2]]) . '.';
+		}
+
+		return $prefix . (isset($matches[3])
+			? $this->queryMetadataExtractor->getColumn($aliases[$matches[2]], $matches[3])
 			:
-			$this->queryMetadataExtractor->getTableName($aliases[$matches[1]]);
+			$this->queryMetadataExtractor->getTableName($aliases[$matches[2]]));
 	}
 
 	/**
@@ -75,7 +80,7 @@ final class RawQueryFactory
 
 		$args = '(?:\((.*?)\))?';
 
-		return '#%(' . $group . ')(?:\.(\w+)' . $args . ')?#';
+		return '#%(%?)(' . $group . ')(?:\.(\w+)' . $args . ')?#';
 	}
 
 }
