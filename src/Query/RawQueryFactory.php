@@ -18,6 +18,11 @@ final class RawQueryFactory
 		$this->functions = new RawQueryFunctions($queryMetadataExtractor);
 	}
 
+	public function prepare(string $sql): RawQueryStatement
+	{
+		return new RawQueryStatement($this->queryMetadataExtractor, $sql);
+	}
+
 	/**
 	 * @param string[] $aliases
 	 */

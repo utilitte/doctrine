@@ -16,6 +16,11 @@ final class QueryMetadataExtractor
 		$this->em = $em;
 	}
 
+	public function getEntityManager(): EntityManagerInterface
+	{
+		return $this->em;
+	}
+
 	public function getTableName(string $entity): string
 	{
 		return $this->em->getClassMetadata($entity)->getTableName();
