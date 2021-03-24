@@ -65,12 +65,12 @@ final class RawQueryFactory
 	 */
 	private function replaceFunctions(array $matches, array $aliases): string
 	{
-		if (count($matches) !== 4) {
+		if (count($matches) !== 5) {
 			throw new InvalidArgumentException('Raw query function must have method');
 		}
 
-		$name = $matches[2];
-		$args = array_map('trim', explode(',', $matches[3]));
+		$name = $matches[3];
+		$args = array_map('trim', explode(',', $matches[4]));
 
 		return $this->functions->call($aliases, $name, ...$args);
 	}
