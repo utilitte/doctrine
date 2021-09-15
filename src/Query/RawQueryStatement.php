@@ -8,6 +8,7 @@ use FrontBundle\Entities\Status;
 use InvalidArgumentException;
 use Nette\Utils\Strings;
 use Utilitte\Doctrine\Query\ValueObject\Alias;
+use Utilitte\Doctrine\Query\ValueObject\Config;
 use Utilitte\Doctrine\QueryMetadataExtractor;
 
 final class RawQueryStatement
@@ -24,6 +25,8 @@ final class RawQueryStatement
 	/** @var Alias[] */
 	private array $aliases = [];
 
+	private Config $config;
+
 	public function __construct(QueryMetadataExtractor $queryMetadataExtractor, string $sql)
 	{
 		$this->queryMetadataExtractor = $queryMetadataExtractor;
@@ -33,12 +36,13 @@ final class RawQueryStatement
 			$queryMetadataExtractor->getEntityManager(),
 			ResultSetMappingBuilder::COLUMN_RENAMING_INCREMENT
 		);
-		$this->functions = new BuiltInFunctions($queryMetadataExtractor, $this->rsmBuilder);
+		$this->config = new Config();
+		$this->functions = new BuiltInFunctions($queryMetadataExtractor, $this->rsmBuilder, $this->config);
 	}
 
-	public function addScalarResult(string $column, string $alias, string $type = 'string'): self
+	public function addScalarResult(string $column, ?string $alias = null, string $type = 'string'): self
 	{
-		$this->rsmBuilder->addScalarResult($column, $alias, $type);
+		$this->rsmBuilder->addScalarResult($column, $alias ?? $column, $type);
 
 		return $this;
 	}
@@ -48,6 +52,28 @@ final class RawQueryStatement
 		$this->aliases[$alias] = new Alias($class, $alias);
 
 		$this->rsmBuilder->addRootEntityFromClassMetadata($class, $alias);
+
+		return $this;
+	}
+
+	public function addJoin(string $sourceAlias, string $field, string $alias): self
+	{
+		$class = $this->aliases[$sourceAlias]->getClass();
+		$metadata = $this->queryMetadataExtractor->getClassMetadata($class);
+		$assocClass = $metadata->getAssociationTargetClass($field);
+		$assocMetadata = $this->queryMetadataExtractor->getClassMetadata($assocClass);
+
+		$this->config->addJoin($alias, sprintf(
+			'%s AS %s ON %s.%s = %s.%s',
+			$assocMetadata->getTableName(),
+			$alias,
+			$sourceAlias,
+			$metadata->getSingleAssociationJoinColumnName($field),
+			$alias,
+			$metadata->getSingleAssociationReferencedJoinColumnName($field)
+		));
+
+		$this->addEntity($assocClass, $alias);
 
 		return $this;
 	}

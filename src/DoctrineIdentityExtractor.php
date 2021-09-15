@@ -20,9 +20,11 @@ final class DoctrineIdentityExtractor
 	/**
 	 * @return mixed[]
 	 */
-	public function extractIdentities(object $entity): array
+	public function extractIdentities(object $entity, bool $flat = false): array
 	{
-		return $this->em->getClassMetadata(get_class($entity))->getIdentifierValues($entity);
+		$identities = $this->em->getClassMetadata(get_class($entity))->getIdentifierValues($entity);
+
+		return $flat ? $this->flatIdentity($identities) : $identities;
 	}
 
 	/**
@@ -115,6 +117,17 @@ final class DoctrineIdentityExtractor
 				sprintf('Given array must be an array of %s, %s contained in array', $type, $this->getClassNameFromEntity($entity))
 			);
 		}
+	}
+
+	private function flatIdentity(array $identity): array
+	{
+		foreach ($identity as $key => $value) {
+			if (is_object($value)) {
+				$identity[$key] = $this->extractIdentity($value);
+			}
+		}
+
+		return $identity;
 	}
 
 }

@@ -18,8 +18,14 @@ final class RawQueryFactory
 		$this->functions = new RawQueryFunctions($queryMetadataExtractor);
 	}
 
-	public function prepare(string $sql): RawQueryStatement
+	public function prepare(string $sql, string ...$subSqls): RawQueryStatement
 	{
+		if ($subSqls) {
+			$sql = preg_replace_callback('#\?([0-9]+)#', function (array $matches) use ($subSqls) {
+				return $subSqls[$matches[1] - 1];
+			}, $sql);
+		}
+
 		return new RawQueryStatement($this->queryMetadataExtractor, $sql);
 	}
 

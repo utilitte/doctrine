@@ -5,6 +5,7 @@ namespace Utilitte\Doctrine\Query;
 use Doctrine\ORM\Query\ResultSetMappingBuilder;
 use InvalidArgumentException;
 use Utilitte\Doctrine\Query\ValueObject\Alias;
+use Utilitte\Doctrine\Query\ValueObject\Config;
 use Utilitte\Doctrine\QueryMetadataExtractor;
 
 final class BuiltInFunctions
@@ -14,10 +15,13 @@ final class BuiltInFunctions
 
 	private ResultSetMappingBuilder $rsmBuilder;
 
-	public function __construct(QueryMetadataExtractor $queryMetadataExtractor, ResultSetMappingBuilder $rsmBuilder)
+	private Config $config;
+
+	public function __construct(QueryMetadataExtractor $queryMetadataExtractor, ResultSetMappingBuilder $rsmBuilder, Config $config)
 	{
 		$this->queryMetadataExtractor = $queryMetadataExtractor;
 		$this->rsmBuilder = $rsmBuilder;
+		$this->config = $config;
 	}
 
 	/**
@@ -30,6 +34,11 @@ final class BuiltInFunctions
 		}
 
 		return $this->$name($aliases, ...$args);
+	}
+
+	private function join(array $aliases, string $alias): string
+	{
+		return $this->config->getJoin($alias);
 	}
 
 	private function select(): string
