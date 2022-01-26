@@ -2,84 +2,87 @@
 
 namespace Utilitte\Doctrine\Insertion;
 
-use Doctrine\DBAL\ParameterType;
 use Doctrine\ORM\EntityManagerInterface;
 
 final class Insertion
 {
 
+	public const TYPE_BASIC = 1;
+	public const TYPE_IGNORE = 2;
+	public const TYPE_DUPLICATE_UPDATE = 3;
+
+	/** @var array<int, mixed[]> */
+	private array $values = [];
+
 	public function __construct(
 		private EntityManagerInterface $em,
+		private string $entity,
+		private int $type = self::TYPE_BASIC,
 	)
 	{
+		$this->metadata = new InsertionMetadata($this->em, $this->em->getClassMetadata($this->entity));
 	}
 
-	public function insertOneIgnore(string $entity, array $values, array $columns = []): bool
+	public function add(array $values): self
 	{
-		return $this->insertArray($entity, [$values], $columns, true) === 1;
+		$this->values[] = $values;
+
+		return $this;
 	}
 
-	public function insertArray(string $entity, array $values, array $columns = [], bool $ignore = false): ?int
+	public function getSql(): string
 	{
-		$insert = $this->sqlValues($values);
-		$metadata = $this->em->getClassMetadata($entity);
-		$table = $metadata->getTableName();
-
-		if (!$insert) {
-			return null;
+		if (!$this->values) {
+			return '';
 		}
 
-		if ($columns) {
-			$columns = implode(
-				', ',
-				array_map(
-					function (string $column) use ($metadata): string
-					{
-						if (isset($metadata->fieldMappings[$column])) {
-							return $metadata->getColumnName($column);
-						}
-
-						return $metadata->getSingleAssociationJoinColumnName($column);
-					},
-					$columns
-				)
-			);
-
-			$columns = ' (' . $columns . ')';
-		} else {
-			$columns = '';
-		}
-
-		$sql = sprintf('INSERT%s INTO %s%s %s', $ignore ? ' IGNORE' : '', $table, $columns, $insert);
-
-		return $this->em->getConnection()->executeStatement($sql);
-	}
-
-	private function sqlValues(array $values): ?string
-	{
 		$sql = '';
+		foreach ($this->values as $vals) {
+			$values = $this->metadata->processValues($vals);
 
-		foreach ($values as $items) {
 			$sql .= sprintf(
-				'(%s), ',
-				implode(',', array_map(fn (mixed $value) => $this->escape($value), $items))
+				"%s %s (%s) VALUES (%s)%s;\n",
+				$this->prolog(),
+				$this->metadata->getTableName(),
+				implode(', ', array_keys($values)),
+				implode(', ', $values),
+				$this->epilog($values),
 			);
 		}
 
-		return $sql ? 'VALUES ' . substr($sql, 0, -2) : null;
+		return substr($sql, 0, -1);
 	}
 
-	private function escape(mixed $value): mixed
+	public function execute(): void
 	{
-		$type = ParameterType::STRING;
+		$this->em->getConnection()->executeQuery($this->getSql());
+	}
 
-		if (is_int($value)) {
-			$type = ParameterType::INTEGER;
-		} else if (is_bool($type)) {
-			$type = ParameterType::BOOLEAN;
+	private function prolog(): string
+	{
+		if ($this->type === self::TYPE_IGNORE) {
+			return 'INSERT IGNORE INTO';
 		}
 
-		return $this->em->getConnection()->quote($value, $type);
+		return 'INSERT INTO';
+	}
+
+	/**
+	 * @param array<string, string> $values
+	 */
+	private function epilog(array $values): string
+	{
+		if ($this->type === self::TYPE_DUPLICATE_UPDATE) {
+			$sql = '';
+
+			foreach ($values as $column => $value) {
+				$sql .= sprintf('%s=%s, ', $column, $value);
+			}
+
+			return ' ON DUPLICATE KEY UPDATE ' . substr($sql, 0, -2);
+		}
+
+		return '';
 	}
 
 }
