@@ -59,8 +59,8 @@ final class InsertionMetadata
 
 			$this->fields[$field['fieldName']] = new InsertionFieldMetadata(
 				$this->metadata->getSingleAssociationJoinColumnName($field['fieldName']),
-				$field['joinColumns'][0]['nullable'],
-				$field['joinColumns'][0]['nullable'],
+				$field['joinColumns'][0]['nullable'] ?? false,
+				$field['joinColumns'][0]['nullable'] ?? false,
 				null,
 			);
 		}
