@@ -18,7 +18,7 @@ final class CollectionByEntitiesFactory
 	 * @template T of object
 	 * @template K
 	 * @param T[] $entities
-	 * @param callable(mixed[]): K $fetcher
+	 * @param callable(mixed[]): K[] $fetcher
 	 * @return CollectionByEntities<T, K>
 	 */
 	public function create(array $entities, callable $fetcher, mixed $default): CollectionByEntities
