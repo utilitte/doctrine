@@ -119,13 +119,13 @@ final class InsertionMetadata
 		$fields = $this->fields;
 
 		foreach ($values as $fieldName => $value) {
-			$return[$this->getColumn($fieldName)] = $this->escape($value, $this->getField($fieldName));
+			$return[sprintf('`%s`', $this->getColumn($fieldName))] = $this->escape($value, $this->getField($fieldName));
 
 			unset($fields[$fieldName]);
 		}
 
 		foreach ($fields as $fieldName => $field) {
-			$return[$field->columnName] = $this->escape($this->getDefault($fieldName), $this->getField($fieldName));
+			$return[sprintf('`%s`', $field->columnName)] = $this->escape($this->getDefault($fieldName), $this->getField($fieldName));
 		}
 
 		return $return;
