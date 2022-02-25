@@ -15,8 +15,6 @@ final class DoctrineClause implements ClauseInterface
 	/** @var ClauseCall[] */
 	private array $calls = [];
 
-
-
 	public function leftJoin(
 		string $join,
 		string $alias,
