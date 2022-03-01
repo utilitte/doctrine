@@ -2,9 +2,10 @@
 
 namespace Utilitte\Doctrine\Insertion;
 
+use Countable;
 use Doctrine\ORM\EntityManagerInterface;
 
-final class Insertion
+final class Insertion implements Countable
 {
 
 	public const TYPE_BASIC = 1;
@@ -28,6 +29,11 @@ final class Insertion
 		$this->values[] = $values;
 
 		return $this;
+	}
+
+	public function count(): int
+	{
+		return count($this->values);
 	}
 
 	public function getSql(): string
