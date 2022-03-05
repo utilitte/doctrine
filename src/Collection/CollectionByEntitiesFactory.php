@@ -3,6 +3,7 @@
 namespace Utilitte\Doctrine\Collection;
 
 use Utilitte\Doctrine\DoctrineIdentityExtractor;
+use Utilitte\Doctrine\Helper\HydrationHelper;
 use WeakMap;
 
 final class CollectionByEntitiesFactory
