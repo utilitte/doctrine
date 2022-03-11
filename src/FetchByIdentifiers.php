@@ -4,7 +4,6 @@ namespace Utilitte\Doctrine;
 
 use Doctrine\ORM\EntityManagerInterface;
 use LogicException;
-use Utilitte\Php\ArraySort;
 
 final class FetchByIdentifiers
 {
@@ -16,7 +15,7 @@ final class FetchByIdentifiers
 		$this->em = $em;
 	}
 
-	public function fetch(string $entity, array $ids): array
+	public function fetch(string $entity, array $ids, bool $sort = true): array
 	{
 		$metadata = $this->em->getClassMetadata($entity);
 		$identifiers = $metadata->getIdentifierFieldNames();
@@ -27,17 +26,25 @@ final class FetchByIdentifiers
 
 		$result = $this->em->createQueryBuilder()
 			->select('e')
-			->from($entity, 'e')
+			->from($entity, 'e', 'e.id')
 			->where(sprintf('e.%s IN(:ids)', $column))
 			->setParameter('ids', $ids)
 			->getQuery()
 			->getResult();
 
-		return ArraySort::byGivenValues(
-			$ids,
-			$result,
-			fn (object $entity) => $metadata->getIdentifierValues($entity)[$column]
-		);
+		if (!$sort) {
+			return array_values($result);
+		}
+
+		$entities = [];
+
+		foreach ($ids as $id) {
+			if (isset($result[$id])) {
+				$entities[] = $result[$id];
+			}
+		}
+
+		return $entities;
 	}
 
 }
