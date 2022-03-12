@@ -5,6 +5,6 @@ namespace Utilitte\Doctrine\Query;
 interface NativeQueryBuilderFactory
 {
 
-	public function create(): NativeQueryBuilder;
+	public function create(?string $entity = null, ?string $alias = null): NativeQueryBuilder;
 
 }

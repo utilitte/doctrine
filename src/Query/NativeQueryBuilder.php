@@ -105,6 +105,16 @@ final class NativeQueryBuilder extends QueryBuilder
 	}
 
 	/**
+	 * @param class-string $entity
+	 */
+	public function addEntityMeta(string $entity, string $alias): self
+	{
+		$this->nativeQueryMetadata->addEntity($entity, $alias);
+
+		return $this;
+	}
+
+	/**
 	 * @param string[] $wrap
 	 */
 	private function wrap(string $type, array $wrap): string
@@ -115,6 +125,21 @@ final class NativeQueryBuilder extends QueryBuilder
 	public function getResult(): mixed
 	{
 		return $this->getQuery()->getResult();
+	}
+
+	public function getSingleResult(): mixed
+	{
+		return $this->getQuery()->getSingleResult();
+	}
+
+	public function getSingleScalarResult(): mixed
+	{
+		return $this->getQuery()->getSingleScalarResult();
+	}
+
+	public function getOneOrNullResult(): mixed
+	{
+		return $this->getQuery()->getOneOrNullResult();
 	}
 
 	public function getScalarResult(): mixed
@@ -143,7 +168,6 @@ final class NativeQueryBuilder extends QueryBuilder
 	public function getQuery(): \Doctrine\ORM\NativeQuery
 	{
 		$query = $this->createNativeQuery();
-		bdump($query->getRsm());
 
 		return $this->em->createNativeQuery($query->getSql(), $query->getRsm())
 			->setParameters($this->parameters);
