@@ -4,6 +4,8 @@ namespace Utilitte\Doctrine\Updation;
 
 use Doctrine\DBAL\ParameterType;
 use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\Query\Parameter;
+use Utilitte\Doctrine\Literal\Literal;
 
 final class UpdationSqlBuilder
 {
@@ -35,7 +37,11 @@ final class UpdationSqlBuilder
 		if ($this->where) {
 			$where = [];
 			foreach ($this->where as $field => $value) {
-				$where[] = sprintf('`%s` = %s', $metadata->getColumnName($field), $this->quote($value));
+				if (is_int($field) && $value instanceof Literal) {
+					$where[] = $this->quote($value);
+				} else {
+					$where[] = sprintf('`%s` = %s', $metadata->getColumnName($field), $this->quote($value));
+				}
 			}
 
 			$sql .= sprintf(' WHERE %s', implode(' AND ', $where));
@@ -46,12 +52,13 @@ final class UpdationSqlBuilder
 
 	private function quote(mixed $value): string
 	{
-		return match (gettype($value)) {
-			'integer', 'double' => (string) $value,
-			'boolean' => $value ? '1' : '0',
-			'NULL' => 'NULL',
-			default => $this->em->getConnection()->quote($value),
-		};
+		if ($value instanceof Literal) {
+			return $value->toString($this->em);
+		}
+
+		$parameter = new Parameter('void', $value);
+
+		return $this->em->getConnection()->quote($parameter->getValue(), $parameter->getType());
 	}
 
 }
