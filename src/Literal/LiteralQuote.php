@@ -20,7 +20,7 @@ final class LiteralQuote implements LiteralInterface
 
 	public function toString(EntityManagerInterface $em): string
 	{
-		$replace = $em->getConnection()->quote($this->value, ParameterTypeInferer::inferType($this->value));
+		return $em->getConnection()->quote($this->value, ParameterTypeInferer::inferType($this->value));
 	}
 
 }
