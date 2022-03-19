@@ -22,7 +22,7 @@ final class UpdateManipulation implements Countable
 	}
 
 	/**
-	 * @param array<string, string|Literal> $values field => valueOrLiteral
+	 * @param array<string, mixed> $values field => valueOrLiteral
 	 * @param array<string|int, mixed> $where field|none => valueOrLiteral
 	 */
 	public function add(string $entity, array $values, array $where = [], ?bool $ignore = null): self

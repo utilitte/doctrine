@@ -42,6 +42,20 @@ final class DoctrineClause implements ClauseInterface
 		return $this;
 	}
 
+	public function orderBy(string $field, string $order): self
+	{
+		$this->calls[] = new ClauseCall('orderBy', [$field, $order]);
+
+		return $this;
+	}
+
+	public function addOrderBy(string $field, string $order): self
+	{
+		$this->calls[] = new ClauseCall('addOrderBy', [$field, $order]);
+
+		return $this;
+	}
+
 	public function setParameter(string|int $key, mixed $value): self
 	{
 		$this->parameters[$key] = $value;
