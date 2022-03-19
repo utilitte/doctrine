@@ -28,6 +28,13 @@ final class DoctrineClause implements ClauseInterface
 		return $this;
 	}
 
+	public function addSelect(mixed $clause): self
+	{
+		$this->calls[] = new ClauseCall('addSelect', [$clause]);
+
+		return $this;
+	}
+
 	public function andWhere(mixed ... $clauses): self
 	{
 		$this->calls[] = new ClauseCall('andWhere', $clauses);
@@ -68,7 +75,6 @@ final class DoctrineClause implements ClauseInterface
 		foreach ($this->parameters as $key => $value) {
 			$builder->setParameter($key, $value);
 		}
-
 
 		foreach ($this->calls as $call) {
 			$builder->{$call->method}(...$call->arguments);
