@@ -2,35 +2,18 @@
 
 namespace Utilitte\Doctrine\Collection;
 
-use Utilitte\Doctrine\DoctrineIdentityExtractor;
-
 final class EntityCollectionFactory
 {
 
-	public function __construct(
-		private DoctrineIdentityExtractor $doctrineIdentityExtractor,
-	)
-	{
-	}
-
 	/**
-	 * @template T
-	 * @param mixed[] $values id => mixed
-	 * @return EntityCollection<T>
+	 * @template TKey of object
+	 * @template TValue
+	 * @param iterable<TKey, TValue> $collection
+	 * @return EntityCollection<TKey, TValue>
 	 */
-	public function create(array $values): EntityCollection
+	public function create(iterable $collection): EntityCollection
 	{
-		return new EntityCollection($values, $this->doctrineIdentityExtractor);
-	}
-
-	/**
-	 * @template T
-	 * @param mixed[] $values id => mixed
-	 * @return EntityCollection<T>
-	 */
-	public function createMany(array $values): EntityCollection
-	{
-		return new EntityCollection($values, $this->doctrineIdentityExtractor);
+		return new EntityCollection($collection);
 	}
 
 }

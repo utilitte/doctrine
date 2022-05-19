@@ -5,52 +5,66 @@ namespace Utilitte\Doctrine\Collection;
 use ArrayAccess;
 use LogicException;
 use OutOfBoundsException;
-use Utilitte\Doctrine\DoctrineIdentityExtractor;
+use WeakMap;
 
 /**
- * @template T
- * @implements ArrayAccess<int|string|object, T>
+ * @template TKey of object
+ * @template TValue
+ * @implements ArrayAccess<TKey, TValue>
  */
 final class EntityCollection implements ArrayAccess
 {
 
-	/** @var mixed[] */
-	private $collection = [];
+	/** @var WeakMap<TKey, TValue> */
+	private WeakMap $weakMap;
 
 	/**
-	 * @param mixed[] $map
+	 * @param iterable<TKey, TValue> $collection
 	 */
-	public function __construct(
-		private array $map,
-		private DoctrineIdentityExtractor $doctrineIdentityExtractor,
-	)
+	public function __construct(iterable $collection)
 	{
-	}
+		$this->weakMap = new WeakMap();
 
-	public function has(mixed $offset): bool
-	{
-		if (is_object($offset)) {
-			$offset = $this->doctrineIdentityExtractor->extractIdentity($offset);
+		foreach ($collection as $key => $value) {
+			$this->weakMap[$key] = $value;
 		}
-
-		return array_key_exists($offset, $this->map);
 	}
 
-	public function get(mixed $offset): mixed
+	/**
+	 * @param TKey $offset
+	 */
+	public function has(object $offset): bool
 	{
-		if (is_object($offset)) {
-			$offset = $this->doctrineIdentityExtractor->extractIdentity($offset);
-		}
-
-		return array_key_exists($offset, $this->map) ? $this->map[$offset] :
-			throw new OutOfBoundsException(sprintf('%s is not in array.', (string) $offset));
+		return isset($this->weakMap[$offset]);
 	}
 
+	/**
+	 * @param TKey $offset
+	 */
+	public function get(object $offset): mixed
+	{
+		return $this->weakMap[$offset]
+			   ??
+			   throw new OutOfBoundsException(
+				   sprintf(
+					   'Given object %s is not in collection.',
+					   get_debug_type($offset),
+				   )
+			   );
+	}
+
+	/**
+	 * @param TKey $offset
+	 */
 	public function offsetExists(mixed $offset): bool
 	{
 		return $this->has($offset);
 	}
 
+	/**
+	 * @param TKey $offset
+	 * @return TValue
+	 */
 	public function offsetGet(mixed $offset): mixed
 	{
 		return $this->get($offset);
