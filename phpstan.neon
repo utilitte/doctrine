@@ -1,0 +1,6 @@
+parameters:
+	excludePaths:
+		analyse:
+			- src/Insertion
+			- src/Updation
+			- src/Result

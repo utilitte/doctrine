@@ -2,6 +2,9 @@
 
 namespace Utilitte\Doctrine\Insertion;
 
+use JetBrains\PhpStorm\Deprecated;
+
+#[Deprecated]
 final class InsertionFieldMetadata
 {
 

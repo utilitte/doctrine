@@ -4,7 +4,9 @@ namespace Utilitte\Doctrine\Updation;
 
 use Countable;
 use Doctrine\ORM\EntityManagerInterface;
+use JetBrains\PhpStorm\Deprecated;
 
+#[Deprecated]
 final class Updation implements Countable
 {
 

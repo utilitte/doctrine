@@ -3,7 +3,9 @@
 namespace Utilitte\Doctrine\Insertion;
 
 use Doctrine\ORM\EntityManagerInterface;
+use JetBrains\PhpStorm\Deprecated;
 
+#[Deprecated]
 final class InsertionFactory
 {
 

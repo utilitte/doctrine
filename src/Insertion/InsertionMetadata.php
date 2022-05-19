@@ -6,10 +6,12 @@ use DateTimeInterface;
 use Doctrine\DBAL\ParameterType;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Mapping\ClassMetadata;
+use JetBrains\PhpStorm\Deprecated;
 use LogicException;
 use ReflectionClass;
 use ReflectionProperty;
 
+#[Deprecated]
 final class InsertionMetadata
 {
 

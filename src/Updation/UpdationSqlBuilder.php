@@ -5,8 +5,10 @@ namespace Utilitte\Doctrine\Updation;
 use Doctrine\DBAL\ParameterType;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Query\Parameter;
+use JetBrains\PhpStorm\Deprecated;
 use Utilitte\Doctrine\Literal\Literal;
 
+#[Deprecated]
 final class UpdationSqlBuilder
 {
 

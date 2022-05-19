@@ -4,7 +4,9 @@ namespace Utilitte\Doctrine\Insertion;
 
 use Countable;
 use Doctrine\ORM\EntityManagerInterface;
+use JetBrains\PhpStorm\Deprecated;
 
+#[Deprecated]
 final class Insertion implements Countable
 {
 
