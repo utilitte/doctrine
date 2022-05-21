@@ -2,10 +2,13 @@
 
 namespace Utilitte\Doctrine\Result\Association;
 
+use JetBrains\PhpStorm\Deprecated;
+
 /**
  * @template E
  * @template V
  */
+#[Deprecated]
 interface EntityAssociationInterface
 {
 

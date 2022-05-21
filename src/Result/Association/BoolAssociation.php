@@ -2,8 +2,10 @@
 
 namespace Utilitte\Doctrine\Result\Association;
 
+use JetBrains\PhpStorm\Deprecated;
 use Utilitte\Doctrine\DoctrineIdentityExtractor;
 
+#[Deprecated]
 final class BoolAssociation implements BoolAssociationInterface
 {
 

@@ -2,12 +2,14 @@
 
 namespace Utilitte\Doctrine\Result;
 
+use JetBrains\PhpStorm\Deprecated;
 use Utilitte\Doctrine\DoctrineIdentityExtractor;
 use Utilitte\Doctrine\Result\Association\BoolAssociation;
 use Utilitte\Doctrine\Result\Association\BoolAssociationInterface;
 use Utilitte\Doctrine\Result\Association\FalseAssociation;
 use Utilitte\Doctrine\Result\Association\TrueAssociation;
 
+#[Deprecated]
 final class ResultFactory
 {
 

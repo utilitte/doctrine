@@ -3,6 +3,7 @@
 namespace Utilitte\Doctrine\Bridges\Nette\DI;
 
 use Nette\DI\CompilerExtension;
+use Utilitte\Doctrine\Association\EntityAssociationFactory;
 use Utilitte\Doctrine\Collection\EntityCollectionFactory;
 use Utilitte\Doctrine\Manipulation\MultipleDataManipulationFactory;
 
@@ -18,6 +19,9 @@ final class DoctrineExtension extends CompilerExtension
 
 		$builder->addDefinition($this->prefix('dataManipulation.factory'))
 			->setType(MultipleDataManipulationFactory::class);
+
+		$builder->addDefinition($this->prefix('association.entityFactory'))
+			->setType(EntityAssociationFactory::class);
 	}
 
 }

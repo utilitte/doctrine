@@ -5,8 +5,10 @@ namespace Utilitte\Doctrine;
 use Doctrine\Common\Proxy\Proxy;
 use Doctrine\ORM\EntityManagerInterface;
 use InvalidArgumentException;
+use JetBrains\PhpStorm\Deprecated;
 use LogicException;
 
+#[Deprecated]
 final class DoctrineIdentityExtractor
 {
 

@@ -3,6 +3,7 @@
 namespace Utilitte\Doctrine\Result\Association;
 
 use InvalidArgumentException;
+use JetBrains\PhpStorm\Deprecated;
 use OutOfBoundsException;
 use Utilitte\Doctrine\DoctrineIdentityExtractor;
 
@@ -11,6 +12,7 @@ use Utilitte\Doctrine\DoctrineIdentityExtractor;
  * @template V
  * @implements EntityAssociationInterface<E, V>
  */
+#[Deprecated]
 final class EntityAssociationWithDefaults implements EntityAssociationInterface
 {
 

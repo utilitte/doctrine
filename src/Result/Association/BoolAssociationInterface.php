@@ -2,6 +2,9 @@
 
 namespace Utilitte\Doctrine\Result\Association;
 
+use JetBrains\PhpStorm\Deprecated;
+
+#[Deprecated]
 interface BoolAssociationInterface
 {
 
