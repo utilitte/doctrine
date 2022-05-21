@@ -6,9 +6,9 @@ use ArrayAccess;
 use Utilitte\Doctrine\Identity\EntityUniqueIdentity;
 
 /**
- * @template TKey of Entity
+ * @template TKey of \Utilitte\Doctrine\Entity
  * @template TValue
- * @implements ArrayAccess<TKey, TValue>
+ * @extends ArrayAccess<TKey, TValue>
  */
 interface Association extends ArrayAccess
 {

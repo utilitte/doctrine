@@ -6,7 +6,7 @@ final class EntityAssociationFactory
 {
 
 	/**
-	 * @template TKey of Entity
+	 * @template TKey of \Utilitte\Doctrine\Entity
 	 * @template TValue
 	 * @param class-string<TKey> $className
 	 * @param iterable<TKey|string|int> $collection values are entities or ids
