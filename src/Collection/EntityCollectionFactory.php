@@ -47,7 +47,7 @@ final class EntityCollectionFactory
 	 */
 	public function createStatic(iterable $entities, mixed $value): EntityCollection
 	{
-		return new EntityCollection($this->doctrineIdentityExtractor, $this->callableCreateByCallback(fn () => $fixed, $entities));
+		return new EntityCollection($this->doctrineIdentityExtractor, $this->callableCreateByCallback(fn () => $value, $entities));
 	}
 
 	/**
