@@ -2,13 +2,14 @@
 
 namespace Utilitte\Doctrine\Manipulation;
 
+use Countable;
 use Doctrine\DBAL\ForwardCompatibility\Result;
 use Doctrine\ORM\EntityManagerInterface;
 use Utilitte\Doctrine\Literal\Literal;
 use Utilitte\Doctrine\Manipulation\Builder\InsertBuilder;
 use Utilitte\Doctrine\Manipulation\Builder\UpdateBuilder;
 
-final class InsertManipulation
+final class InsertManipulation implements Countable
 {
 
 	/** @var InsertBuilder[] */
@@ -39,9 +40,12 @@ final class InsertManipulation
 		return implode(";\n", array_map(fn (InsertBuilder $builder) => $builder->getSql(), $this->inserts)) . ";\n";
 	}
 
+	/**
+	 * @return int<0, max>
+	 */
 	public function count(): int
 	{
-		return count($this->updates);
+		return count($this->inserts);
 	}
 
 	public function executeQuery(): Result

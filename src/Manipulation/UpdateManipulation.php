@@ -41,6 +41,9 @@ final class UpdateManipulation implements Countable
 		return implode(";\n", array_map(fn (UpdateBuilder $builder) => $builder->getSql(), $this->updates)) . ";\n";
 	}
 
+	/**
+	 * @return int<0, max>
+	 */
 	public function count(): int
 	{
 		return count($this->updates);

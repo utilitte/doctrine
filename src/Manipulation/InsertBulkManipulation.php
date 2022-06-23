@@ -3,10 +3,11 @@
 namespace Utilitte\Doctrine\Manipulation;
 
 use BadMethodCallException;
+use Countable;
 use Doctrine\ORM\EntityManagerInterface;
 use Utilitte\Doctrine\Manipulation\Builder\Builder;
 
-final class InsertBulkManipulation extends Builder
+final class InsertBulkManipulation extends Builder implements Countable
 {
 
 	use OnDuplicateKey;
@@ -30,6 +31,14 @@ final class InsertBulkManipulation extends Builder
 		parent::__construct($em);
 
 		$this->fieldCount = count($this->fields);
+	}
+
+	/**
+	 * @return int<0, max>
+	 */
+	public function count(): int
+	{
+		return count($this->values);
 	}
 
 	public function add(mixed ...$values): self
