@@ -32,6 +32,11 @@ final class UpdateManipulation implements Countable
 		return $this;
 	}
 
+	public function empty(): bool
+	{
+		return !$this->updates;
+	}
+
 	public function getSql(): string
 	{
 		if (!$this->updates) {

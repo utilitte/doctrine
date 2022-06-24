@@ -31,6 +31,11 @@ final class InsertManipulation implements Countable
 		return $this->inserts[] = new InsertBuilder($this->em, $entity, $values, $this->defaultIgnore);
 	}
 
+	public function empty(): bool
+	{
+		return !$this->inserts;
+	}
+
 	public function getSql(): string
 	{
 		if (!$this->inserts) {

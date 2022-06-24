@@ -41,6 +41,11 @@ final class InsertBulkManipulation extends Builder implements Countable
 		return count($this->values);
 	}
 
+	public function empty(): bool
+	{
+		return !$this->values;
+	}
+
 	public function add(mixed ...$values): self
 	{
 		if ($this->fieldCount !== count($values)) {
