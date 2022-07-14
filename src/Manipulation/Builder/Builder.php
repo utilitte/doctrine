@@ -53,7 +53,6 @@ abstract class Builder
 			return [];
 		}
 
-		$sql = '';
 		$build = [];
 		foreach ($assignments as $field => $value) {
 			if (is_int($field) && $value instanceof Literal) {
