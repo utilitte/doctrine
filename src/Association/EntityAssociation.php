@@ -2,6 +2,7 @@
 
 namespace Utilitte\Doctrine\Association;
 
+use DomainException;
 use LogicException;
 use OutOfBoundsException;
 use Utilitte\Doctrine\Entity;
@@ -48,6 +49,7 @@ final class EntityAssociation implements Association
 
 	/**
 	 * @param TKey|EntityUniqueIdentity $offset
+	 * @return TValue
 	 */
 	public function get(object $offset): mixed
 	{
@@ -55,6 +57,55 @@ final class EntityAssociation implements Association
 
 		if (!array_key_exists($key, $this->map)) {
 			throw new OutOfBoundsException(sprintf('Given entity %s is not in association.', $key));
+		}
+
+		return $this->map[$key];
+	}
+
+	/**
+	 * @param TValue $default
+	 * @return TValue
+	 */
+	public function trySingle(mixed $default): mixed
+	{
+		$count = count($this->map);
+
+		return match ($count) {
+			0 => $default,
+			1 => current($this->map),
+			default => throw new DomainException(
+				sprintf('Cannot get single value from association which have %d records.', $count)
+			),
+		};
+	}
+
+	/**
+	 * @param TValue $default
+	 * @return TValue
+	 */
+	public function single(): mixed
+	{
+		$count = count($this->map);
+
+		return match ($count) {
+			1 => current($this->map),
+			default => throw new DomainException(
+				sprintf('Cannot get single value from association which have %d records.', $count)
+			),
+		};
+	}
+
+	/**
+	 * @param TKey|EntityUniqueIdentity $offset
+	 * @param TValue $default
+	 * @return TValue
+	 */
+	public function try(object $offset, mixed $default): mixed
+	{
+		$key = EntityUniqueIdentity::create($this->className, $offset)->getUniqueId();
+
+		if (!array_key_exists($key, $this->map)) {
+			return $default;
 		}
 
 		return $this->map[$key];

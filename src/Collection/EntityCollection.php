@@ -14,7 +14,7 @@ use WeakMap;
  * @template TValue
  * @implements ArrayAccess<TKey, TValue>
  */
-#[Deprecated]
+#[Deprecated('Use EntityAssociation instead')]
 final class EntityCollection implements ArrayAccess
 {
 
