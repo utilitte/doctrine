@@ -21,15 +21,19 @@ final class EntityAssociation implements Association
 
 	/**
 	 * @param class-string<TKey> $className
-	 * @param iterable<TKey|EntityUniqueIdentity|string|int, TValue> $collection
+	 * @param iterable<TKey|EntityUniqueIdentity|string|int, TValue>|callable(): iterable<TKey|EntityUniqueIdentity|string|int, TValue> $collection
 	 */
 	public function __construct(
 		private string $className,
-		iterable $collection,
+		iterable|callable $collection,
 	)
 	{
 		if (!is_subclass_of($this->className, Entity::class)) {
 			throw new LogicException(sprintf('Class name %s must implements %s.', $this->className, Entity::class));
+		}
+
+		if (is_callable($collection)) {
+			$collection = $collection();
 		}
 
 		foreach ($collection as $key => $value) {
