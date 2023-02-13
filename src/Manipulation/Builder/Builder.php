@@ -23,6 +23,10 @@ abstract class Builder
 			return $value->toString($this->em);
 		}
 
+		if ($value === null) {
+			return 'NULL';
+		}
+
 		return $this->em->getConnection()->quote($value, ParameterTypeInferer::inferType($value));
 	}
 
