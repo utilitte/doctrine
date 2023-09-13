@@ -17,6 +17,8 @@ final class Insertion implements Countable
 	/** @var array<int, mixed[]> */
 	private array $values = [];
 
+	private InsertionMetadata $metadata;
+
 	public function __construct(
 		private EntityManagerInterface $em,
 		private string $entity,
